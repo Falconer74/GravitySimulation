@@ -8,6 +8,7 @@ public:
 	Point();
 	Point(ull x, ull y);
 	void operator += (Point point);
+	void operator *= (Point point);
 };
 struct Vector {
 public:

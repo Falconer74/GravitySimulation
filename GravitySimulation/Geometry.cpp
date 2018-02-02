@@ -1,53 +1,43 @@
 #include "Header.h";
+#include "GeometryHeader.h";
 
-struct Point {
-public:
-	ull X;
-	ull Y;
-	Point()
-	{
-		X = 0;
-		Y = 0;
-	}
-	Point(ull x, ull y)
-	{
-		X = x;
-		Y = y;
-	}
+Point::Point()
+{
+	X = 0;
+	Y = 0;
+}
+Point::Point(ull x, ull y)
+{
+	X = x;
+	Y = y;
+}
 
-	void operator += (Point point) {
-		this->X += point.X;
-		this->Y += point.Y;
-	}
+void Point::operator += (Point point) {
+	this->X += point.X;
+	this->Y += point.Y;
+}
 
-	void operator *= (Point point) {
-		this->X *= point.X;
-		this->Y *= point.Y;
-	}
-};
+void Point::operator *= (Point point) {
+	this->X *= point.X;
+	this->Y *= point.Y;
+}
 
-struct Vector {
-public:
-	Point StartPoint;
-	Point Acceleration;
+Vector::Vector()
+{
+}
 
-	Vector()
-	{
-	}
+Vector::Vector(Point startPoint, Point acceleration)
+{
+	StartPoint = startPoint;
+	Acceleration = acceleration;
+}
 
-	Vector(Point startPoint, Point acceleration)
-	{
-		StartPoint = startPoint;
-		Acceleration = acceleration;
-	}
+void Vector::Move()
+{
+	StartPoint = Acceleration;
+}
 
-	void Move()
-	{
-		StartPoint = Acceleration;
-	}
-
-	void AddAcceleration(Point acceleration) 
-	{
-		Acceleration += acceleration;
-	}
-};
+void Vector::AddAcceleration(Point acceleration)
+{
+	Acceleration += acceleration;
+}
