@@ -3,6 +3,9 @@
 #include <vector>;
 #include "SpaceObjectHeader.h";
 
+GLint scale = 1.0f;
+std::vector<SpaceObject*> *spaceObjects;
+
 void DrawFilledCircle(GLint x, GLint y, GLint radius) {
 	int i;
 	int triangleAmount = 50;
@@ -20,83 +23,88 @@ void DrawFilledCircle(GLint x, GLint y, GLint radius) {
 	glEnd();
 }
 
-void Update() 
-{
-
+void DrawRectangle() {
+	glBegin(GL_QUADS);
+	glVertex2i(-5, 5);
+	glVertex2i(-5, -5);
+	glVertex2i(5, -5);
+	glVertex2i(5, 5);
+	glEnd();
 }
 
-int main(void)
+void reshape(int width, int height)
 {
-	GLFWwindow* window;
-
-	/* Initialize the library */
-	if (!glfwInit())
-		return -1;
-
-	/* Create a windowed mode window and its OpenGL context */
-	window = glfwCreateWindow(640, 640, "Hello World", NULL, NULL);
-	if (!window)
-	{
-		glfwTerminate();
-		return -1;
-	}
-
-	/* Make the window's context current */
-	glfwMakeContextCurrent(window);
-
-	GLint scale = 1.0f;
-
-	//glClearColor(0.5f, 0.5f, 1, 1);
+	glViewport(0, 0, width, height);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(-500, 500, -500, 500, 0, 0);
+	gluOrtho2D(-(width / 2), width / 2, -(height / 2), height / 2);
 	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+}
 
-	
-	std::vector<SpaceObject*> spaceObjects;// = new std::vector<SpaceObject*>();
+void draw() {
+	int size = spaceObjects->size();
 
-	spaceObjects.push_back(new SpaceObject(10000, 0.9f, *(new Vector(*(new Point(0, 0)), *(new Point(0, 0))))));
-	//spaceObjects.push_back(new SpaceObject(5000, 150, *(new Vector(*(new Point(80, 50)), *(new Point(3, 4))))));
-	
-	/* Loop until the user closes the window */
-	while (!glfwWindowShouldClose(window))
-	{
-		/* Render here */
-		glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT);
+	for (int i = 0; i < size; ++i) {
+		(*spaceObjects)[i]->DrawFilledCircle();
+	}
+	glutSwapBuffers();
+}
 
-		/* Swap front and back buffers */
+void update(int) {
+	glutTimerFunc(1, update, 0);
 
-		int size = spaceObjects.size();
+	int size = spaceObjects->size();
 
-		for (int i = 0; i < size; ++i) {
-			for (int j = 0; j < size; ++j) {
-				if (i == j) {
+	for (int i = 0; i < size; ++i) {
+		for (int j = 0; j < size; ++j) {
+			if (i == j) {
+				continue;
+			}
+			else {
+				if ((*spaceObjects)[i] == nullptr || (*spaceObjects)[j] == nullptr) {
 					continue;
 				}
-				else {
-					if (spaceObjects[i] == nullptr || spaceObjects[j] == nullptr) {
-						continue;
-					}
-					spaceObjects[i]->Interact(spaceObjects[j]);
+				if ((*spaceObjects)[i]->Interact((*spaceObjects)[j])) {
+					(*spaceObjects)[j] = nullptr;
 				}
 			}
 		}
-
-		for (int i = 0; i < size; ++i) {
-			spaceObjects[i]->MoveObject();
-		}
-
-		for (int i = 0; i < size; ++i) {
-			//spaceObjects[i]->DrawFilledCircle();
-			DrawFilledCircle(0, 0, 3);
-		}
-
-		glfwSwapBuffers(window);
-
-		/* Poll for and process events */
-		glfwPollEvents();
 	}
 
-	glfwTerminate();
+	for (int i = 0; i < size; i++)
+	{
+		if ((*spaceObjects)[i] == nullptr) {
+			(*spaceObjects).erase((*spaceObjects).begin() + i);
+		}
+	}
+
+	for (int i = 0; i < (*spaceObjects).size(); ++i) {
+		(*spaceObjects)[i]->MoveObject();
+	}
+
+	glutPostRedisplay();
+}
+
+int main(int argc, char * argv[])
+{
+	glutInit(&argc, argv);
+
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
+
+	glutInitWindowSize(800, 600);
+	glutCreateWindow("Gravity simulation");
+	glutReshapeFunc(reshape);
+	glutDisplayFunc(draw);
+	glutTimerFunc(1, update, 0);
+
+	spaceObjects = new std::vector<SpaceObject*>();
+
+	spaceObjects->push_back(new SpaceObject(10000, 4, *(new Vector(*(new Point(-250, 50)), *(new Point(2, 0))))));
+	spaceObjects->push_back(new SpaceObject(5000, 2, *(new Vector(*(new Point(250, -100)), *(new Point(-1, 0))))));
+
+	glutMainLoop();
+	
 	return 0;
 }

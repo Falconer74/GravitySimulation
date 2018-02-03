@@ -8,7 +8,7 @@ SpaceObject::SpaceObject()
 	ObjectVector;
 }
 
-SpaceObject::SpaceObject(ull mass, GLfloat radius, Vector vector)
+SpaceObject::SpaceObject(ull mass, ull radius, Vector vector)
 {
 	Mass = mass;
 	Radius = radius;
@@ -23,21 +23,20 @@ void SpaceObject::SetDensity()
 
 void SpaceObject::DrawFilledCircle() {
 	int i;
-	int triangleAmount = 8;
+	int triangleAmount = 50;
 
 	GLfloat twicePi = 2.0f * M_PI;
 
 	glBegin(GL_TRIANGLE_FAN);
 
-	GLfloat x = (GLfloat)ObjectVector.StartPoint.X;
-	GLfloat y = (GLfloat)ObjectVector.StartPoint.Y;
-	GLfloat r = (GLfloat)Radius;
+	GLint x = ObjectVector.StartPoint.X;
+	GLint y = ObjectVector.StartPoint.Y;
 
-	glVertex2f(x, y);
+	glVertex2i(x, y);
 	for (i = 0; i <= triangleAmount; i++) {
-		glVertex2f(
-			x + (r * cos(i *  twicePi / triangleAmount)),
-			y + (r * sin(i * twicePi / triangleAmount))
+		glVertex2i(
+			x + (Radius * cos(i *  twicePi / triangleAmount)),
+			y + (Radius * sin(i * twicePi / triangleAmount))
 		);
 	}
 	glEnd();
@@ -49,38 +48,47 @@ void SpaceObject::MoveObject() {
 
 bool SpaceObject::Interact(SpaceObject *object)
 {
-	int xDistance = pow(abs((long long)object->ObjectVector.StartPoint.X) - abs((long long)this->ObjectVector.StartPoint.X), 2);
-	int yDistance = pow(abs((long long)object->ObjectVector.StartPoint.Y) - abs((long long)this->ObjectVector.StartPoint.Y), 2);
+	int xDistance = pow(object->ObjectVector.StartPoint.X - this->ObjectVector.StartPoint.X, 2);
+	int yDistance = pow(object->ObjectVector.StartPoint.Y - this->ObjectVector.StartPoint.Y, 2);
 	int distance = sqrt(xDistance + yDistance);
-	if (distance >= object->Radius + this->Radius) {
+	if (distance <= object->Radius + this->Radius) {
 		this->Radius += object->Radius;
-		this->Mass = object->Mass;
+		this->Mass += object->Mass;
 		SetDensity();
 		this->ObjectVector.AddAcceleration(object->ObjectVector.Acceleration);
 		return true;
 	}
 	else 
 	{
-		ull forceGravity = (this->Mass * object->Mass) / pow(distance, 2);
-		ull acceleration = (this->Mass / object->Mass) * forceGravity;
+		float forceGravity = (this->Mass * object->Mass) / pow(distance, 2) / 10000;
+		float acceleration = (this->Mass / object->Mass) * forceGravity;
 
 		Point direction;
 		if (object->ObjectVector.StartPoint.X > this->ObjectVector.StartPoint.X) 
 		{
 			direction.X = 1 * acceleration;
 		}
-		else 
+		else if(object->ObjectVector.StartPoint.X < this->ObjectVector.StartPoint.X)
 		{
 			direction.X = -1 * acceleration;
+		}
+		else 
+		{
+			direction.X = 0;
 		}
 		if (object->ObjectVector.StartPoint.Y > this->ObjectVector.StartPoint.Y)
 		{
 			direction.Y = 1 * acceleration;
 		}
-		else
+		else if(object->ObjectVector.StartPoint.Y < this->ObjectVector.StartPoint.Y)
 		{
 			direction.Y = -1 * acceleration;
 		}
+		else 
+		{
+			direction.Y = 0;
+		}
 		this->ObjectVector.AddAcceleration(direction);
+		return false;
 	}
 }

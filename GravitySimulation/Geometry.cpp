@@ -34,7 +34,7 @@ Vector::Vector(Point startPoint, Point acceleration)
 
 void Vector::Move()
 {
-	StartPoint = Acceleration;
+	StartPoint += Acceleration;
 }
 
 void Vector::AddAcceleration(Point acceleration)

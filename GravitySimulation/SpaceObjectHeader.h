@@ -6,13 +6,13 @@ class SpaceObject
 {
 public:
 	ull Mass;
-	GLfloat Radius;
+	ull Radius;
 	ull Density;
 	Vector ObjectVector;
 
 	SpaceObject();
 
-	SpaceObject(ull mass, GLfloat radius, Vector vector);
+	SpaceObject(ull mass, ull radius, Vector vector);
 
 	void SetDensity();
 
