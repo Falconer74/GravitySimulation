@@ -2,13 +2,18 @@
 #include "GeometryHeader.h";
 #include <vector>;
 #include "SpaceObjectHeader.h";
+#include "Display.h";
 
-GLint scale = 1.0f;
+int Display::height;
+int Display::width;
+float Display::scale;
+float Display::speed;
+
 std::vector<SpaceObject*> *spaceObjects;
 
 void DrawFilledCircle(GLint x, GLint y, GLint radius) {
 	int i;
-	int triangleAmount = 50;
+	int triangleAmount = 20;
 
 	GLfloat twicePi = 2.0f * M_PI;
 
@@ -53,7 +58,7 @@ void draw() {
 }
 
 void update(int) {
-	glutTimerFunc(1, update, 0);
+	glutTimerFunc(Display::speed, update, 0);
 
 	int size = spaceObjects->size();
 
@@ -63,7 +68,10 @@ void update(int) {
 				continue;
 			}
 			else {
-				if ((*spaceObjects)[i] == nullptr || (*spaceObjects)[j] == nullptr) {
+				if ((*spaceObjects)[i] == nullptr) {
+					break;
+				}
+				else if ((*spaceObjects)[j] == nullptr) {
 					continue;
 				}
 				if ((*spaceObjects)[i]->Interact((*spaceObjects)[j])) {
@@ -73,10 +81,15 @@ void update(int) {
 		}
 	}
 
-	for (int i = 0; i < size; i++)
+	int iterator = 0;
+	while (iterator < spaceObjects->size())
 	{
-		if ((*spaceObjects)[i] == nullptr) {
-			(*spaceObjects).erase((*spaceObjects).begin() + i);
+		if ((*spaceObjects)[iterator] == nullptr) {
+			(*spaceObjects).erase((*spaceObjects).begin() + iterator);
+			++iterator;
+		}
+		else {
+			++iterator;
 		}
 	}
 
@@ -93,7 +106,12 @@ int main(int argc, char * argv[])
 
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 
-	glutInitWindowSize(800, 600);
+	Display::height = 1600;
+	Display::width = 900;
+	Display::scale = 1.0f;
+	Display::speed = 1.0f;
+
+	glutInitWindowSize(Display::height, Display::width);
 	glutCreateWindow("Gravity simulation");
 	glutReshapeFunc(reshape);
 	glutDisplayFunc(draw);
@@ -101,8 +119,14 @@ int main(int argc, char * argv[])
 
 	spaceObjects = new std::vector<SpaceObject*>();
 
-	spaceObjects->push_back(new SpaceObject(10000, 4, *(new Vector(*(new Point(-250, 50)), *(new Point(2, 0))))));
-	spaceObjects->push_back(new SpaceObject(5000, 2, *(new Vector(*(new Point(250, -100)), *(new Point(-1, 0))))));
+	spaceObjects->push_back(new SpaceObject(5200, 3, *(new Vector(*(new Point(-800, 50)), *(new Point(2, 0))))));
+	spaceObjects->push_back(new SpaceObject(5000, 2, *(new Vector(*(new Point(800, -100)), *(new Point(-1, 0))))));
+	spaceObjects->push_back(new SpaceObject(6000, 5, *(new Vector(*(new Point(0, 450)), *(new Point(-1, -1))))));
+	spaceObjects->push_back(new SpaceObject(4700, 2, *(new Vector(*(new Point(0, -450)), *(new Point(3, 0))))));
+
+	//spaceObjects->push_back(new SpaceObject(9000, 6, *(new Vector(*(new Point(-800, -100)), *(new Point(0.5f, 0))))));
+	//spaceObjects->push_back(new SpaceObject(9000, 6, *(new Vector(*(new Point(800, 100)), *(new Point(-0.6f, 0))))));
+	//spaceObjects->push_back(new SpaceObject(9000, 6, *(new Vector(*(new Point(0, 450)), *(new Point(-0.1, -0.5f))))));
 
 	glutMainLoop();
 	

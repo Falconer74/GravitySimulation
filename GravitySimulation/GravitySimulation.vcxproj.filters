@@ -35,5 +35,8 @@
     <ClInclude Include="SpaceObjectHeader.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Display.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

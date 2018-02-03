@@ -8,7 +8,7 @@ SpaceObject::SpaceObject()
 	ObjectVector;
 }
 
-SpaceObject::SpaceObject(ull mass, ull radius, Vector vector)
+SpaceObject::SpaceObject(int mass, int radius, Vector vector)
 {
 	Mass = mass;
 	Radius = radius;
@@ -60,8 +60,8 @@ bool SpaceObject::Interact(SpaceObject *object)
 	}
 	else 
 	{
-		float forceGravity = (this->Mass * object->Mass) / pow(distance, 2) / 10000;
-		float acceleration = (this->Mass / object->Mass) * forceGravity;
+		float forceGravity = (this->Mass * object->Mass) / pow(distance, 2) / 500000;
+		float acceleration = (float(object->Mass / this->Mass)) * forceGravity;
 
 		Point direction;
 		if (object->ObjectVector.StartPoint.X > this->ObjectVector.StartPoint.X) 

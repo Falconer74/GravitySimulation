@@ -128,6 +128,7 @@
     <ClCompile Include="SpaceObject.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Display.h" />
     <ClInclude Include="GeometryHeader.h" />
     <ClInclude Include="Header.h" />
     <ClInclude Include="SpaceObjectHeader.h" />

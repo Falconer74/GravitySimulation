@@ -3,10 +3,10 @@
 
 struct Point {
 public:
-	ull X;
-	ull Y;
+	double X;
+	double Y;
 	Point();
-	Point(ull x, ull y);
+	Point(double x, double y);
 	void operator += (Point point);
 	void operator *= (Point point);
 };

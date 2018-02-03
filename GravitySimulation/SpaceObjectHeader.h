@@ -5,14 +5,14 @@
 class SpaceObject
 {
 public:
-	ull Mass;
-	ull Radius;
-	ull Density;
+	int Mass;
+	int Radius;
+	int Density;
 	Vector ObjectVector;
 
 	SpaceObject();
 
-	SpaceObject(ull mass, ull radius, Vector vector);
+	SpaceObject(int mass, int radius, Vector vector);
 
 	void SetDensity();
 

@@ -6,7 +6,7 @@ Point::Point()
 	X = 0;
 	Y = 0;
 }
-Point::Point(ull x, ull y)
+Point::Point(double x, double y)
 {
 	X = x;
 	Y = y;

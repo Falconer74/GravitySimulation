@@ -5,5 +5,3 @@
 #include <cmath>
 #include <vector>
 #include "glut.h"
-
-typedef double ull;
