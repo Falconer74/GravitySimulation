@@ -6,7 +6,7 @@ class SpaceObject
 {
 public:
 	int Mass;
-	int Radius;
+	float Radius;
 	int Density;
 	Vector ObjectVector;
 
@@ -21,4 +21,6 @@ public:
 	void MoveObject();
 
 	bool Interact(SpaceObject *object);
+
+	void unite(SpaceObject *object);
 };

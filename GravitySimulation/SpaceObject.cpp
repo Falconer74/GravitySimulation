@@ -46,21 +46,26 @@ void SpaceObject::MoveObject() {
 	ObjectVector.Move();
 }
 
+void SpaceObject::unite(SpaceObject *object) {
+	float ratio = (float((float)object->Mass / (float)this->Mass));
+	this->ObjectVector.AddAcceleration((object->ObjectVector.Acceleration *= ratio));
+	this->Radius += object->Radius * ratio;
+	this->Mass += object->Mass;
+	SetDensity();
+	delete object;
+}
+
 bool SpaceObject::Interact(SpaceObject *object)
 {
 	int xDistance = pow(object->ObjectVector.StartPoint.X - this->ObjectVector.StartPoint.X, 2);
 	int yDistance = pow(object->ObjectVector.StartPoint.Y - this->ObjectVector.StartPoint.Y, 2);
 	int distance = sqrt(xDistance + yDistance);
 	if (distance <= object->Radius + this->Radius) {
-		this->Radius += object->Radius;
-		this->Mass += object->Mass;
-		SetDensity();
-		this->ObjectVector.AddAcceleration(object->ObjectVector.Acceleration);
 		return true;
 	}
 	else 
 	{
-		float forceGravity = (this->Mass * object->Mass) / pow(distance, 2) / 500000;
+		float forceGravity = (this->Mass * object->Mass) / pow(distance, 2) / 300000;
 		float acceleration = (float(object->Mass / this->Mass)) * forceGravity;
 
 		Point direction;

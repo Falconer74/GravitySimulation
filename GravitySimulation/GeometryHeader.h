@@ -8,7 +8,7 @@ public:
 	Point();
 	Point(double x, double y);
 	void operator += (Point point);
-	void operator *= (Point point);
+	Point operator *= (double impulse);
 };
 struct Vector {
 public:

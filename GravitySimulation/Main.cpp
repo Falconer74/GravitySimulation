@@ -3,11 +3,13 @@
 #include <vector>;
 #include "SpaceObjectHeader.h";
 #include "Display.h";
+#include <ctime>
 
 int Display::height;
 int Display::width;
 float Display::scale;
-float Display::speed;
+int Display::frameRefresh;
+bool Display::isPause;
 
 std::vector<SpaceObject*> *spaceObjects;
 
@@ -58,7 +60,9 @@ void draw() {
 }
 
 void update(int) {
-	glutTimerFunc(Display::speed, update, 0);
+	if (!Display::isPause) {
+		glutTimerFunc(Display::frameRefresh, update, 0);
+	}
 
 	int size = spaceObjects->size();
 
@@ -75,7 +79,14 @@ void update(int) {
 					continue;
 				}
 				if ((*spaceObjects)[i]->Interact((*spaceObjects)[j])) {
-					(*spaceObjects)[j] = nullptr;
+					if ((*spaceObjects)[i]->Mass > (*spaceObjects)[j]->Mass) {
+						(*spaceObjects)[i]->unite((*spaceObjects)[j]);
+						(*spaceObjects)[j] = nullptr;
+					}
+					else {
+						(*spaceObjects)[j]->unite((*spaceObjects)[i]);
+						(*spaceObjects)[i] = nullptr;
+					}
 				}
 			}
 		}
@@ -86,7 +97,6 @@ void update(int) {
 	{
 		if ((*spaceObjects)[iterator] == nullptr) {
 			(*spaceObjects).erase((*spaceObjects).begin() + iterator);
-			++iterator;
 		}
 		else {
 			++iterator;
@@ -100,8 +110,11 @@ void update(int) {
 	glutPostRedisplay();
 }
 
+
+
 int main(int argc, char * argv[])
 {
+	srand(time(0));
 	glutInit(&argc, argv);
 
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
@@ -109,7 +122,8 @@ int main(int argc, char * argv[])
 	Display::height = 1600;
 	Display::width = 900;
 	Display::scale = 1.0f;
-	Display::speed = 1.0f;
+	Display::frameRefresh = 24;
+	Display::isPause = false;
 
 	glutInitWindowSize(Display::height, Display::width);
 	glutCreateWindow("Gravity simulation");
@@ -119,14 +133,46 @@ int main(int argc, char * argv[])
 
 	spaceObjects = new std::vector<SpaceObject*>();
 
-	spaceObjects->push_back(new SpaceObject(5200, 3, *(new Vector(*(new Point(-800, 50)), *(new Point(2, 0))))));
-	spaceObjects->push_back(new SpaceObject(5000, 2, *(new Vector(*(new Point(800, -100)), *(new Point(-1, 0))))));
-	spaceObjects->push_back(new SpaceObject(6000, 5, *(new Vector(*(new Point(0, 450)), *(new Point(-1, -1))))));
-	spaceObjects->push_back(new SpaceObject(4700, 2, *(new Vector(*(new Point(0, -450)), *(new Point(3, 0))))));
+	//spaceObjects->push_back(new SpaceObject(7000, 3, *(new Vector(*(new Point(-800, 50)), *(new Point(2, 0))))));
+	//spaceObjects->push_back(new SpaceObject(5000, 2, *(new Vector(*(new Point(800, -100)), *(new Point(-1, 0))))));
+	//spaceObjects->push_back(new SpaceObject(6000, 5, *(new Vector(*(new Point(0, 450)), *(new Point(-1, -1))))));
+	//spaceObjects->push_back(new SpaceObject(4700, 2, *(new Vector(*(new Point(0, -450)), *(new Point(3, 0))))));
+	//spaceObjects->push_back(new SpaceObject(14000, 6, *(new Vector(*(new Point(-800, -100)), *(new Point(0.5f, 0))))));
 
-	//spaceObjects->push_back(new SpaceObject(9000, 6, *(new Vector(*(new Point(-800, -100)), *(new Point(0.5f, 0))))));
-	//spaceObjects->push_back(new SpaceObject(9000, 6, *(new Vector(*(new Point(800, 100)), *(new Point(-0.6f, 0))))));
-	//spaceObjects->push_back(new SpaceObject(9000, 6, *(new Vector(*(new Point(0, 450)), *(new Point(-0.1, -0.5f))))));
+	//spaceObjects->push_back(new SpaceObject(12000, 12, *(new Vector(*(new Point(500, 100)), *(new Point(-0.1f, 0))))));
+	//spaceObjects->push_back(new SpaceObject(3000, 3, *(new Vector(*(new Point(-800, -100)), *(new Point(0.8f, 0.3f))))));
+
+	//spaceObjects->push_back(new SpaceObject(14000, 6, *(new Vector(*(new Point(-800, -100)), *(new Point(0.5f, 0))))));
+	//spaceObjects->push_back(new SpaceObject(14000, 6, *(new Vector(*(new Point(800, 100)), *(new Point(-0.6f, 0))))));
+	//spaceObjects->push_back(new SpaceObject(14000, 6, *(new Vector(*(new Point(0, 450)), *(new Point(-0.1, -0.5f))))));
+
+	//spaceObjects->push_back(new SpaceObject(20000, 15, *(new Vector(*(new Point(0, 0)), *(new Point(0.0f, 0.0f))))));
+	//spaceObjects->push_back(new SpaceObject(1000, 3, *(new Vector(*(new Point(-400, -200)), *(new Point(0.0f, 0.9f))))));
+
+	//spaceObjects->push_back(new SpaceObject(20000, 15, *(new Vector(*(new Point(0, 0)), *(new Point(0.0f, 0.0f))))));
+	//spaceObjects->push_back(new SpaceObject(1000, 3, *(new Vector(*(new Point(-800, 800)), *(new Point(0.9f, 0.0f))))));
+	//spaceObjects->push_back(new SpaceObject(1000, 3, *(new Vector(*(new Point(-800, 600)), *(new Point(0.9f, 0.0f))))));
+	//spaceObjects->push_back(new SpaceObject(1000, 3, *(new Vector(*(new Point(-800, 400)), *(new Point(0.9f, 0.0f))))));
+	//spaceObjects->push_back(new SpaceObject(1000, 3, *(new Vector(*(new Point(-800, 200)), *(new Point(0.9f, 0.0f))))));
+	//spaceObjects->push_back(new SpaceObject(1000, 3, *(new Vector(*(new Point(-800, 0)), *(new Point(0.9f, 0.0f))))));
+	//spaceObjects->push_back(new SpaceObject(1000, 3, *(new Vector(*(new Point(-800, -200)), *(new Point(0.9f, 0.0f))))));
+	//spaceObjects->push_back(new SpaceObject(1000, 3, *(new Vector(*(new Point(-800, -400)), *(new Point(0.9f, 0.0f))))));
+	//spaceObjects->push_back(new SpaceObject(1000, 3, *(new Vector(*(new Point(-800, -600)), *(new Point(0.9f, 0.0f))))));
+
+	//spaceObjects->push_back(new SpaceObject(20000, 15, *(new Vector(*(new Point(300, -200)), *(new Point(-0.1f, 0.05f))))));
+	//spaceObjects->push_back(new SpaceObject(16000, 12, *(new Vector(*(new Point(-100, 350)), *(new Point(-0.1f, 0.05f))))));
+	//spaceObjects->push_back(new SpaceObject(7000, 7, *(new Vector(*(new Point(-300, -100)), *(new Point(-0.1f, 0.05f))))));
+	//spaceObjects->push_back(new SpaceObject(3000, 3, *(new Vector(*(new Point(-400, -200)), *(new Point(0.0f, 0.9f))))));
+
+	//spaceObjects->push_back(new SpaceObject(8000, 8, *(new Vector(*(new Point(100, 0)), *(new Point(1.0f, 0.0f))))));
+	//spaceObjects->push_back(new SpaceObject(1000, 2, *(new Vector(*(new Point(-100, 0)), *(new Point(3, 0.0f))))));
+
+	int size = 40;
+	int radius;
+	for (int i = 0; i < size; ++i) {
+		radius = rand() % 8 + 1;
+		spaceObjects->push_back(new SpaceObject(radius * 500, radius, *(new Vector(*(new Point(rand() % 1600 - 800, rand() % 900 - 450)), *(new Point(static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / 0.6f)), static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / 0.2f))))))));
+	}
 
 	glutMainLoop();
 	

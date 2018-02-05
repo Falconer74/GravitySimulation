@@ -17,9 +17,10 @@ void Point::operator += (Point point) {
 	this->Y += point.Y;
 }
 
-void Point::operator *= (Point point) {
-	this->X *= point.X;
-	this->Y *= point.Y;
+Point Point::operator *= (double impulse) {
+	this->X *= impulse;
+	this->Y *= impulse;
+	return *this;
 }
 
 Vector::Vector()

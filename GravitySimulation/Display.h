@@ -5,5 +5,6 @@ public:
 	static int height;
 	static int width;
 	static float scale;
-	static float speed;
+	static int frameRefresh;
+	static bool isPause;
 };
